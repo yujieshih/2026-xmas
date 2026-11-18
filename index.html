@@ -1,4 +1,12 @@
 <!DOCTYPE html>
+<script>
+window.addEventListener('click', function unlockiOSAudio() {
+  if (navigator.audioSession) { navigator.audioSession.type = 'playback'; }
+  const a = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA');
+  a.play().catch(()=>{});
+}, { once: true });
+</script>
+
 <html lang="zh-TW"><head><script data-bard-client-injected="true">(function(firebaseConfig, initialAuthToken, appId) {
         window.__firebase_config = firebaseConfig;
         window.__initial_auth_token = initialAuthToken;
