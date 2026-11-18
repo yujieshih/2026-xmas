@@ -1,10 +1,30 @@
 <!DOCTYPE html>
 <script>
-window.addEventListener('click', function unlockiOSAudio() {
-  if (navigator.audioSession) { navigator.audioSession.type = 'playback'; }
-  const a = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA');
-  a.play().catch(()=>{});
-}, { once: true });
+(function() {
+  const OrigAC = window.AudioContext || window.webkitAudioContext;
+  if (OrigAC) {
+    const patch = function() {
+      const ctx = new OrigAC();
+      window.__myAudioCtx = ctx;
+      return ctx;
+    };
+    patch.prototype = OrigAC.prototype;
+    window.AudioContext = window.webkitAudioContext = patch;
+  }
+  const unlock = function() {
+    if (navigator.audioSession) { navigator.audioSession.type = 'playback'; }
+    const a = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA');
+    a.play().catch(()=>{});
+    if (window.__myAudioCtx && window.__myAudioCtx.state === 'suspended') {
+      window.__myAudioCtx.resume();
+    }
+    setTimeout(() => {
+      if (window.__myAudioCtx) window.__myAudioCtx.resume();
+    }, 50);
+  };
+  window.addEventListener('touchstart', unlock, { capture: true, once: true });
+  window.addEventListener('click', unlock, { capture: true, once: true });
+})();
 </script>
 
 <html lang="zh-TW"><head><script data-bard-client-injected="true">(function(firebaseConfig, initialAuthToken, appId) {
